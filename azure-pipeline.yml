@@ -23,7 +23,7 @@ stages:
     - task: AzureCLI@2  
       displayName: 'build bicep artifact' 
       inputs: 
-        azureSubscription: ${{ azureSubscription }}
+        azureSubscription: ${{ parameters.azureSubscription }}
         scriptType: 'pscore'  
         scriptLocation: 'inlineScript'  
         inlineScript: 'az bicep build --file main.bicep'  
@@ -48,7 +48,7 @@ stages:
           - task: AzureCLI@2
             displayName: 'deploy bicep template'
             inputs:
-              azureSubscription: ${{ azureSubscription }}
+              azureSubscription: ${{ parameters.azureSubscription }}
               scriptType: 'pscore'
               scriptLocation: 'inlineScript'
               inlineScript: |
