@@ -2,7 +2,7 @@
 param projectName string
 targetScope = 'resourceGroup'
 param location string = resourceGroup().location
-param resourcegroupname string 
+param resourceGroupName string 
 
 //SA VARIABLES
 var storageAccountName = 'sa${projectName}01'
@@ -27,7 +27,7 @@ param isShareSoftDeleteEnabled bool = true
 param shareSoftDeleteRetentionDays int = 7
 
 module sa 'Modules/storageaccount.bicep' = {
-  scope: resourceGroup('${resourcegroupname}')
+  scope: resourceGroup('${resourceGroupName}')
   name: 'sa'
   params: {
     location: location
@@ -63,7 +63,7 @@ param administratorLogin string = 'sqladmin'
 param enableADS bool = true
 
 module sql 'Modules/azuresql.bicep' = {
-  scope: resourceGroup('${resourcegroupname}')
+  scope: resourceGroup('${resourceGroupName}')
   name: 'sql'
   params: {
     location: location

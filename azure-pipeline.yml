@@ -55,5 +55,5 @@ stages:
                 az group create --name $(resourceGroupName) --location $(location) 
                 az deployment group create  `
                 --template-file $(Build.SourcesDirectory)/main.bicep `
-                --parameters resourcegroupname=$(resourcegroupname) projectName=$(projectName) `
-                --resource-group $(resourcegroupname)
+                --parameters resourceGroupName=$(resourceGroupName) projectName=$(projectName) `
+                --resource-group $(resourceGroupName)
