@@ -1,0 +1,58 @@
+name: Bicep-InfrastructureDeployment
+
+variables:
+- name: resourceGroupName
+  value: 'rg-bicepDevOpsTemplate'
+- name: azureSubscription
+  value: ''
+- name: location
+  value: 'westeurope'
+-name: projectName
+  value: 'biceptemplate'
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    steps:
+    - task: AzureCLI@2  
+      displayName: 'build bicep artifact' 
+      inputs: 
+        azureSubscription: $(azureSubscription)
+        scriptType: 'pscore'  
+        scriptLocation: 'inlineScript'  
+        inlineScript: 'az bicep build --file main.bicep'  
+
+    - task: PublishBuildArtifacts@1 
+      displayName: 'Publish artifact in pipeline' 
+      inputs: 
+        PathtoPublish: '$(Build.SourcesDirectory)/main.json'  
+        ArtifactName: 'finishedTemplate'  
+        publishLocation: 'Container' 
+
+- stage: deploy
+  jobs:
+  - deployment: biceptoAzure
+    displayName: 'Deploy bicep to Azure'
+    environment: 'AzureDeployment'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+              # Powershell to get the Object Id of the SPN - needed for the Access policy of Key Vault  
+          - task: AzureCLI@2
+            displayName: 'deploy bicep template'
+            inputs:
+              azureSubscription: $(azureSubscription)
+              scriptType: 'pscore'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az group create --name $(resourceGroupName) --location $(location) 
+                az deployment group create  `
+                --template-file $(Build.SourcesDirectory)/main.bicep `
+                --parameters resourcegroupname=$(resourcegroupname) projectName=$(projectName) `
+                --resource-group $(resourcegroupname)
