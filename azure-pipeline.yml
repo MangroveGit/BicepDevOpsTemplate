@@ -1,10 +1,12 @@
 name: Bicep-InfrastructureDeployment
 
+parameters: 
+- name: azureSubscription
+  type: string
+
 variables:
 - name: resourceGroupName
   value: 'rg-bicepDevOpsTemplate'
-- name: azureSubscription
-  value: ''
 - name: location
   value: 'westeurope'
 -name: projectName
@@ -21,7 +23,7 @@ stages:
     - task: AzureCLI@2  
       displayName: 'build bicep artifact' 
       inputs: 
-        azureSubscription: $(azureSubscription)
+        azureSubscription: ${{ azureSubscription }}
         scriptType: 'pscore'  
         scriptLocation: 'inlineScript'  
         inlineScript: 'az bicep build --file main.bicep'  
@@ -43,11 +45,10 @@ stages:
         deploy:
           steps:
           - checkout: self
-              # Powershell to get the Object Id of the SPN - needed for the Access policy of Key Vault  
           - task: AzureCLI@2
             displayName: 'deploy bicep template'
             inputs:
-              azureSubscription: $(azureSubscription)
+              azureSubscription: ${{ azureSubscription }}
               scriptType: 'pscore'
               scriptLocation: 'inlineScript'
               inlineScript: |
