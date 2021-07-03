@@ -9,7 +9,7 @@ variables:
   value: 'rg-bicepDevOpsTemplate'
 - name: location
   value: 'westeurope'
--name: projectName
+- name: projectName
   value: 'biceptemplate'
 
 pool:
